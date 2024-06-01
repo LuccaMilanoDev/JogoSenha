@@ -34,7 +34,8 @@ fun AppContent() {
     when (currentScreen) {
         "home" -> HomeScreen(onStartClick = { currentScreen = "user_input" })
         "user_input" -> UserInputScreen(onBackClick = { currentScreen = "home" }, onNextLevelClick = { currentScreen = "level_2" })
-        "level_2" -> Level2Screen(onBackClick = { currentScreen = "home" })
+        "level_2" -> Level2Screen(onBackClick = { currentScreen = "home" }, onNextLevelClick = { currentScreen = "level_3" })
+        "level_3" -> Level3Screen(onBackClick = { currentScreen = "home" })
     }
 }
 
@@ -64,7 +65,7 @@ fun HomeScreen(onStartClick: () -> Unit) {
 fun UserInputScreen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     val textState = remember { mutableStateOf("") }
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
-    val generatedNumber = remember { generateRandomNumber(number = 1) }
+    val generatedNumber = remember { generateRandomNumber(1) }
     var gameWon by remember { mutableStateOf(false) }
 
     Column(
@@ -127,16 +128,20 @@ fun UserInputScreen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
         ) {
             Text(text = "Back")
         }
+        Text(
+            text = "Resposta: $generatedNumber (Apenas para testes)",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = 16.dp)
+        )
     }
 }
 
 @Composable
-fun Level2Screen(onBackClick: () -> Unit) {
+fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     val textState = remember { mutableStateOf("") }
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
-    val generatedNumber = remember { generateRandomNumber(number = 2) }
+    val generatedNumber = remember { generateRandomNumber(2) }
     var gameWon by remember { mutableStateOf(false) }
-
 
     Column(
         modifier = Modifier
@@ -146,6 +151,81 @@ fun Level2Screen(onBackClick: () -> Unit) {
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
     ) {
         Text(text = "Level 2", style = MaterialTheme.typography.headlineLarge)
+        OutlinedTextField(
+            value = textState.value,
+            onValueChange = {
+                if (it.length <= 5 && it.all { char -> char.isDigit() }) {
+                    textState.value = it
+                }
+            },
+            label = { Text("Digite 5 dígitos") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        )
+        Button(
+            onClick = {
+                if (textState.value.length == 5) {
+                    val result = checkBullsAndCows(generatedNumber, textState.value)
+                    storedValues = storedValues + (textState.value to result)
+                    textState.value = ""
+                    if (result == "5B 0C") {
+                        gameWon = true
+                    }
+                }
+            },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Enviar")
+        }
+        Column(modifier = Modifier.padding(top = 16.dp)) {
+            storedValues.forEach { (value, result) ->
+                Text(text = "Você enviou: $value   $result", modifier = Modifier.padding(top = 4.dp))
+            }
+        }
+        if (gameWon) {
+            Text(
+                text = "Parabéns, você ganhou!",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+            Button(
+                onClick = onNextLevelClick,
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text(text = "Próximo Nível")
+            }
+        }
+        Button(
+            onClick = onBackClick,
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = "Back")
+        }
+        Text(
+            text = "Resposta: $generatedNumber (Apenas para testes)",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = 16.dp)
+        )
+    }
+}
+
+@Composable
+fun Level3Screen(onBackClick: () -> Unit) {
+    val textState = remember { mutableStateOf("") }
+    var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
+    val generatedNumber = remember { generateRandomNumber(3) }
+    var gameWon by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+    ) {
+        Text(text = "Level 3", style = MaterialTheme.typography.headlineLarge)
         OutlinedTextField(
             value = textState.value,
             onValueChange = {
@@ -185,11 +265,6 @@ fun Level2Screen(onBackClick: () -> Unit) {
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(top = 16.dp)
             )
-            //Button(
-                //onClick = onNextLevelClick,
-               // modifier = Modifier.padding(top = 16.dp)
-            //) {
-                Text(text = "Próximo Nível")
         }
         Button(
             onClick = onBackClick,
@@ -197,17 +272,22 @@ fun Level2Screen(onBackClick: () -> Unit) {
         ) {
             Text(text = "Back")
         }
+        Text(
+            text = "Resposta: $generatedNumber (Apenas para testes)",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = 16.dp)
+        )
     }
 }
 
-fun generateRandomNumber(number: Number): String {
+fun generateRandomNumber(level: Int): String {
     val digits = (0..9).toMutableList()
-    if(number ==1){
-        return (1..4).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
-    }else if (number==2){
-        return (1..6).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
+    return when (level) {
+        1 -> (1..4).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
+        2 -> (1..5).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
+        3 -> (1..6).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
+        else -> (1..4).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
     }
-    return (1..4).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
 }
 
 fun checkBullsAndCows(secret: String, guess: String): String {
@@ -238,8 +318,6 @@ fun checkBullsAndCows(secret: String, guess: String): String {
 @Composable
 fun UserInputScreenPreview() {
     JogoSenhaTheme {
-        Level2Screen(onBackClick = {})
+        Level3Screen(onBackClick = {})
     }
 }
-
-
