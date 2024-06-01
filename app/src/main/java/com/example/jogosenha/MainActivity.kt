@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jogosenha.ui.theme.JogoSenhaTheme
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +61,8 @@ fun HomeScreen(onStartClick: () -> Unit) {
 @Composable
 fun UserInputScreen(onBackClick: () -> Unit) {
     val textState = remember { mutableStateOf("") }
-    var storedValues by remember { mutableStateOf(listOf<String>()) }
+    var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
+    val generatedNumber = remember { generateRandomNumber() }
 
     Column(
         modifier = Modifier
@@ -84,8 +86,9 @@ fun UserInputScreen(onBackClick: () -> Unit) {
         )
         Button(
             onClick = {
-                if (textState.value.isNotEmpty()) {
-                    storedValues = storedValues + textState.value
+                if (textState.value.length == 4) {
+                    val result = checkBullsAndCows(generatedNumber, textState.value)
+                    storedValues = storedValues + (textState.value to result)
                     textState.value = ""
                 }
             },
@@ -94,8 +97,8 @@ fun UserInputScreen(onBackClick: () -> Unit) {
             Text(text = "Enviar")
         }
         Column(modifier = Modifier.padding(top = 16.dp)) {
-            storedValues.forEach { value ->
-                Text(text = "Você enviou: $value", modifier = Modifier.padding(top = 4.dp))
+            storedValues.forEach { (value, result) ->
+                Text(text = "Você enviou: $value   $result", modifier = Modifier.padding(top = 4.dp))
             }
         }
         Button(
@@ -105,6 +108,35 @@ fun UserInputScreen(onBackClick: () -> Unit) {
             Text(text = "Back")
         }
     }
+}
+
+fun generateRandomNumber(): String {
+    val digits = (0..9).toMutableList()
+    return (1..4).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
+}
+
+fun checkBullsAndCows(secret: String, guess: String): String {
+    var bulls = 0
+    var cows = 0
+    val secretMap = mutableMapOf<Char, Int>()
+    val guessMap = mutableMapOf<Char, Int>()
+
+    for (i in secret.indices) {
+        if (secret[i] == guess[i]) {
+            bulls++
+        } else {
+            secretMap[secret[i]] = secretMap.getOrDefault(secret[i], 0) + 1
+            guessMap[guess[i]] = guessMap.getOrDefault(guess[i], 0) + 1
+        }
+    }
+
+    for ((key, count) in guessMap) {
+        if (secretMap.containsKey(key)) {
+            cows += minOf(count, secretMap[key]!!)
+        }
+    }
+
+    return "${bulls}B ${cows}C"
 }
 
 
