@@ -51,6 +51,7 @@ fun HomeScreen(onStartClick: () -> Unit) {
         Text(
             text = "Bem-vindo ao Jogo Senha! Clique em Start para começar.",
             style = MaterialTheme.typography.bodyLarge,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)
         )
         Button(onClick = onStartClick) {
