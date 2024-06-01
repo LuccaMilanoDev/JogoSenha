@@ -67,6 +67,7 @@ fun UserInputScreen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(1) }
     var gameWon by remember { mutableStateOf(false) }
+    var waitingForInput by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -98,11 +99,19 @@ fun UserInputScreen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     if (result == "4B 0C") {
                         gameWon = true
                     }
+                    waitingForInput = false
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(text = "Enviar")
+        }
+        if (waitingForInput) {
+            Text(
+                text = "Esperando usuário digitar...",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(top = 16.dp)
+            )
         }
         Column(modifier = Modifier.padding(top = 16.dp)) {
             storedValues.forEach { (value, result) ->
@@ -142,6 +151,7 @@ fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(2) }
     var gameWon by remember { mutableStateOf(false) }
+    var waitingForInput by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -173,11 +183,19 @@ fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     if (result == "5B 0C") {
                         gameWon = true
                     }
+                    waitingForInput = false
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(text = "Enviar")
+        }
+        if (waitingForInput) {
+            Text(
+                text = "Esperando usuário digitar...",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(top = 16.dp)
+            )
         }
         Column(modifier = Modifier.padding(top = 16.dp)) {
             storedValues.forEach { (value, result) ->
@@ -217,6 +235,7 @@ fun Level3Screen(onBackClick: () -> Unit) {
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(3) }
     var gameWon by remember { mutableStateOf(false) }
+    var waitingForInput by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -248,11 +267,19 @@ fun Level3Screen(onBackClick: () -> Unit) {
                     if (result == "6B 0C") {
                         gameWon = true
                     }
+                    waitingForInput = false
                 }
             },
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(text = "Enviar")
+        }
+        if (waitingForInput) {
+            Text(
+                text = "Esperando usuário digitar...",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(top = 16.dp)
+            )
         }
         Column(modifier = Modifier.padding(top = 16.dp)) {
             storedValues.forEach { (value, result) ->
