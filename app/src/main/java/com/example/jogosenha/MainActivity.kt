@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jogosenha.ui.theme.JogoSenhaTheme
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +36,8 @@ fun AppContent() {
         "home" -> HomeScreen(onStartClick = { currentScreen = "user_input" })
         "user_input" -> UserInputScreen(onBackClick = { currentScreen = "home" }, onNextLevelClick = { currentScreen = "level_2" })
         "level_2" -> Level2Screen(onBackClick = { currentScreen = "home" }, onNextLevelClick = { currentScreen = "level_3" })
-        "level_3" -> Level3Screen(onBackClick = { currentScreen = "home" })
+        "level_3" -> Level3Screen(onBackClick = { currentScreen = "home" }, onNextLevelClick = { currentScreen = "level_4" })
+        "level_4" -> Level4Screen(onBackClick = { currentScreen = "home" })
     }
 }
 
@@ -230,7 +232,7 @@ fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
 }
 
 @Composable
-fun Level3Screen(onBackClick: () -> Unit) {
+fun Level3Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     val textState = remember { mutableStateOf("") }
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(3) }
@@ -292,6 +294,12 @@ fun Level3Screen(onBackClick: () -> Unit) {
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(top = 16.dp)
             )
+            Button(
+                onClick = onNextLevelClick,
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text(text = "Próximo Nível")
+            }
         }
         Button(
             onClick = onBackClick,
@@ -307,12 +315,144 @@ fun Level3Screen(onBackClick: () -> Unit) {
     }
 }
 
+@Composable
+fun Level4Screen(onBackClick: () -> Unit) {
+    val textState = remember { mutableStateOf("") }
+    var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
+    val generatedNumber = remember { generateRandomNumber(1) }
+    var gameWon by remember { mutableStateOf(false) }
+    var waitingForInput by remember { mutableStateOf(true) }
+    var startTime by remember { mutableStateOf<Long?>(null) }
+    var remainingTime by remember { mutableStateOf(60) }
+    val isTimeOver = remember { mutableStateOf(false) }
+
+    LaunchedEffect(startTime) {
+        if (startTime != null) {
+            while (remainingTime > 0 && !gameWon && !isTimeOver.value) {
+                delay(1000L)
+                remainingTime -= 1
+                if (remainingTime <= 0) {
+                    isTimeOver.value = true
+                }
+            }
+        }
+    }
+
+    if (isTimeOver.value && !gameWon) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text(text = "Tempo Esgotado!") },
+            text = { Text(text = "O tempo acabou. Você deseja tentar novamente ou voltar para a tela inicial?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        // Reset state for retry
+                        textState.value = ""
+                        storedValues = listOf()
+                        gameWon = false
+                        waitingForInput = true
+                        startTime = null
+                        remainingTime = 60
+                        isTimeOver.value = false
+                    }
+                ) {
+                    Text("Tentar Novamente")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onBackClick) {
+                    Text("Voltar para Home")
+                }
+            }
+        )
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Level 4", style = MaterialTheme.typography.headlineLarge)
+                Text(text = "Tempo: ${remainingTime}s", style = MaterialTheme.typography.headlineLarge)
+            }
+            OutlinedTextField(
+                value = textState.value,
+                onValueChange = {
+                    if (it.length <= 4 && it.all { char -> char.isDigit() }) {
+                        textState.value = it
+                    }
+                },
+                label = { Text("Digite 4 dígitos") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            )
+            Button(
+                onClick = {
+                    if (textState.value.length == 4) {
+                        if (startTime == null) {
+                            startTime = System.currentTimeMillis()
+                        }
+                        val result = checkBullsAndCows(generatedNumber, textState.value)
+                        storedValues = storedValues + (textState.value to result)
+                        textState.value = ""
+                        if (result == "4B 0C") {
+                            gameWon = true
+                        }
+                        waitingForInput = false
+                    }
+                },
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text(text = "Enviar")
+            }
+            if (waitingForInput) {
+                Text(
+                    text = "Esperando usuário digitar...",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+            Column(modifier = Modifier.padding(top = 16.dp)) {
+                storedValues.forEach { (value, result) ->
+                    Text(text = "Você enviou: $value   $result", modifier = Modifier.padding(top = 4.dp))
+                }
+            }
+            if (gameWon) {
+                Text(
+                    text = "Parabéns, você ganhou!",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+            Button(
+                onClick = onBackClick,
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text(text = "Back")
+            }
+            Text(
+                text = "Resposta: $generatedNumber (Apenas para testes)",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
+    }
+}
+
 fun generateRandomNumber(level: Int): String {
     val digits = (0..9).toMutableList()
     return when (level) {
         1 -> (1..4).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
         2 -> (1..5).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
         3 -> (1..6).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
+        4 -> (1..4).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
         else -> (1..4).map { digits.removeAt(Random.nextInt(digits.size)) }.joinToString("")
     }
 }
@@ -345,6 +485,6 @@ fun checkBullsAndCows(secret: String, guess: String): String {
 @Composable
 fun UserInputScreenPreview() {
     JogoSenhaTheme {
-        Level3Screen(onBackClick = {})
+        Level4Screen(onBackClick = {})
     }
 }
