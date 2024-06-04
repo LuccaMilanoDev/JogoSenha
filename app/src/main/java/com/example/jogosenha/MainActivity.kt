@@ -4,15 +4,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jogosenha.ui.theme.JogoSenhaTheme
+import com.example.jogosenha.ui.theme.White
+import com.example.jogosenha.ui.theme.WhitePurple
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -33,36 +41,97 @@ fun AppContent() {
     var currentScreen by remember { mutableStateOf("home") }
 
     when (currentScreen) {
-        "home" -> HomeScreen(onStartClick = { currentScreen = "user_input" })
-        "user_input" -> UserInputScreen(onBackClick = { currentScreen = "home" }, onNextLevelClick = { currentScreen = "level_2" })
-        "level_2" -> Level2Screen(onBackClick = { currentScreen = "home" }, onNextLevelClick = { currentScreen = "level_3" })
-        "level_3" -> Level3Screen(onBackClick = { currentScreen = "home" }, onNextLevelClick = { currentScreen = "level_4" })
-        "level_4" -> Level4Screen(onBackClick = { currentScreen = "home" })
+        "home" -> HomeScreen(
+            onStartClick = { currentScreen = "user_input" },
+            onAllLevelsClick = { currentScreen = "all_levels" }
+        )
+        "all_levels" -> AllLevelsScreen(
+            onBackClick = { currentScreen = "home" },
+            onLevelClick = { level ->
+                currentScreen = when (level) {
+                    1 -> "user_input"
+                    2 -> "level_2"
+                    3 -> "level_3"
+                    4 -> "level_4"
+                    else -> "home"
+                }
+            }
+        )
+        "user_input" -> UserInputScreen(
+            onBackClick = { currentScreen = "home" },
+            onNextLevelClick = { currentScreen = "level_2" }
+        )
+        "level_2" -> Level2Screen(
+            onBackClick = { currentScreen = "home" },
+            onNextLevelClick = { currentScreen = "level_3" }
+        )
+        "level_3" -> Level3Screen(
+            onBackClick = { currentScreen = "home" },
+            onNextLevelClick = { currentScreen = "level_4" }
+        )
+        "level_4" -> Level4Screen(
+            onBackClick = { currentScreen = "home" }
+        )
     }
 }
 
 @Composable
-fun HomeScreen(onStartClick: () -> Unit) {
+fun HomeScreen(onStartClick: () -> Unit, onAllLevelsClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Jogo Senha", style = MaterialTheme.typography.headlineLarge)
+        Text(text = "Jogo Senha", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
         Text(
             text = "Bem-vindo ao Jogo Senha! Clique em Start para começar.",
             style = MaterialTheme.typography.bodyLarge,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
+            color = MaterialTheme.colorScheme.onBackground
         )
-        Button(onClick = onStartClick) {
-            Text(text = "Start")
-        }
+        CustomButton(onClick = onStartClick, text = "Start", modifier = Modifier.padding(bottom = 16.dp))
+        CustomButton(onClick = onAllLevelsClick, text = "All Levels")
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AllLevelsScreen(onBackClick: () -> Unit, onLevelClick: (Int) -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "All Levels", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
+        for (level in 1..4) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .clickable { onLevelClick(level) },
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                border = BorderStroke(1.dp, WhitePurple)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Level $level", style = MaterialTheme.typography.bodyLarge, color = White)
+                }
+            }
+        }
+        CustomButton(onClick = onBackClick, text = "Back", modifier = Modifier.padding(top = 16.dp))
+    }
+}
 @Composable
 fun UserInputScreen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     val textState = remember { mutableStateOf("") }
@@ -73,12 +142,17 @@ fun UserInputScreen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
 
     Column(
         modifier = Modifier
-            .padding(35.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Level 1", style = MaterialTheme.typography.headlineLarge)
+        Text(
+            text = "Level 1",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
         OutlinedTextField(
             value = textState.value,
             onValueChange = {
@@ -86,13 +160,18 @@ fun UserInputScreen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     textState.value = it
                 }
             },
-            label = { Text("Digite 4 dígitos") },
+            label = { Text("Digite 4 dígitos", color = MaterialTheme.colorScheme.onBackground) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)
+                .padding(bottom = 8.dp),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = WhitePurple,
+                unfocusedBorderColor = WhitePurple
+            )
         )
-        Button(
+        CustomButton(
             onClick = {
                 if (textState.value.length == 4) {
                     val result = checkBullsAndCows(generatedNumber, textState.value)
@@ -103,50 +182,67 @@ fun UserInputScreen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     }
                     waitingForInput = false
                 }
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Enviar")
-        }
+            }, text = "Enviar", Modifier.padding(top = 16.dp)
+        )
         if (waitingForInput) {
             Text(
                 text = "Esperando usuário digitar...",
                 style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
         Column(modifier = Modifier.padding(top = 16.dp)) {
             storedValues.forEach { (value, result) ->
-                Text(text = "Você enviou: $value   $result", modifier = Modifier.padding(top = 4.dp))
+                Text(
+                    text = "Você enviou: $value   $result",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
         }
         if (gameWon) {
-            Text(
-                text = "Parabéns, você ganhou!",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(top = 16.dp)
+            AlertDialog(
+                onDismissRequest = {},
+                title = { Text(text = "Muito bem!") },
+                text = { Text(text = "Você acertou o número :)") },
+                confirmButton = {
+                    TextButton(onClick = onNextLevelClick) {
+                        Text("Próximo Nível")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onBackClick) {
+                        Text("Voltar para Home")
+                    }
+                }
             )
-            Button(
-                onClick = onNextLevelClick,
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(text = "Próximo Nível")
-            }
         }
-        Button(
+        CustomButton(
             onClick = onBackClick,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Back")
-        }
+            text = "Back",
+            Modifier.padding(top = 16.dp)
+        )
         Text(
             text = "Resposta: $generatedNumber (Apenas para testes)",
             style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(top = 16.dp)
         )
     }
 }
 
+@Composable
+fun CustomButton(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        border = BorderStroke(1.dp, WhitePurple),
+        modifier = modifier
+    ) {
+        Text(text = text, color = White)
+    }
+}
 @Composable
 fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     val textState = remember { mutableStateOf("") }
@@ -205,17 +301,21 @@ fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
             }
         }
         if (gameWon) {
-            Text(
-                text = "Parabéns, você ganhou!",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(top = 16.dp)
+            AlertDialog(
+                onDismissRequest = {},
+                title = { Text(text = "Muito bem!") },
+                text = { Text(text = "Você acertou o número :)") },
+                confirmButton = {
+                    TextButton(onClick = onNextLevelClick) {
+                        Text("Próximo Nível")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onBackClick) {
+                        Text("Voltar para Home")
+                    }
+                }
             )
-            Button(
-                onClick = onNextLevelClick,
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(text = "Próximo Nível")
-            }
         }
         Button(
             onClick = onBackClick,
@@ -289,17 +389,21 @@ fun Level3Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
             }
         }
         if (gameWon) {
-            Text(
-                text = "Parabéns, você ganhou!",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(top = 16.dp)
+            AlertDialog(
+                onDismissRequest = {},
+                title = { Text(text = "Muito bem!") },
+                text = { Text(text = "Você acertou o número :)") },
+                confirmButton = {
+                    TextButton(onClick = onNextLevelClick) {
+                        Text("Próximo Nível")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onBackClick) {
+                        Text("Voltar para Home")
+                    }
+                }
             )
-            Button(
-                onClick = onNextLevelClick,
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(text = "Próximo Nível")
-            }
         }
         Button(
             onClick = onBackClick,
@@ -425,10 +529,20 @@ fun Level4Screen(onBackClick: () -> Unit) {
                 }
             }
             if (gameWon) {
-                Text(
-                    text = "Parabéns, você ganhou!",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(top = 16.dp)
+                AlertDialog(
+                    onDismissRequest = {},
+                    title = { Text(text = "Muito bem!") },
+                    text = { Text(text = "Você acertou o número :)") },
+                    confirmButton = {
+                        /*TextButton(onClick = onNextLevelClick) {
+                            Text("Próximo Nível")
+                        }*/
+                    },
+                    dismissButton = {
+                        TextButton(onClick = onBackClick) {
+                            Text("Voltar para Home")
+                        }
+                    }
                 )
             }
             Button(
@@ -444,6 +558,11 @@ fun Level4Screen(onBackClick: () -> Unit) {
             )
         }
     }
+}
+
+@Composable
+fun Level5Screen(onBackClick: () -> Unit) {
+
 }
 
 fun generateRandomNumber(level: Int): String {
