@@ -231,18 +231,6 @@ fun UserInputScreen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
         )
     }
 }
-
-@Composable
-fun CustomButton(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        border = BorderStroke(1.dp, WhitePurple),
-        modifier = modifier
-    ) {
-        Text(text = text, color = White)
-    }
-}
 @Composable
 fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     val textState = remember { mutableStateOf("") }
@@ -254,11 +242,16 @@ fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Level 2", style = MaterialTheme.typography.headlineLarge)
+        Text(
+            text = "Level 2",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
         OutlinedTextField(
             value = textState.value,
             onValueChange = {
@@ -266,13 +259,18 @@ fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     textState.value = it
                 }
             },
-            label = { Text("Digite 5 dígitos") },
+            label = { Text("Digite 5 dígitos", color = MaterialTheme.colorScheme.onBackground) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)
+                .padding(bottom = 8.dp),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = WhitePurple,
+                unfocusedBorderColor = WhitePurple
+            )
         )
-        Button(
+        CustomButton(
             onClick = {
                 if (textState.value.length == 5) {
                     val result = checkBullsAndCows(generatedNumber, textState.value)
@@ -284,20 +282,24 @@ fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     waitingForInput = false
                 }
             },
+            text = "Enviar",
             modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Enviar")
-        }
+        )
         if (waitingForInput) {
             Text(
                 text = "Esperando usuário digitar...",
                 style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
         Column(modifier = Modifier.padding(top = 16.dp)) {
             storedValues.forEach { (value, result) ->
-                Text(text = "Você enviou: $value   $result", modifier = Modifier.padding(top = 4.dp))
+                Text(
+                    text = "Você enviou: $value   $result",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
         }
         if (gameWon) {
@@ -317,15 +319,15 @@ fun Level2Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                 }
             )
         }
-        Button(
+        CustomButton(
             onClick = onBackClick,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Back")
-        }
+            text = "Back",
+            Modifier.padding(top = 16.dp)
+        )
         Text(
             text = "Resposta: $generatedNumber (Apenas para testes)",
             style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(top = 16.dp)
         )
     }
@@ -342,11 +344,16 @@ fun Level3Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Level 3", style = MaterialTheme.typography.headlineLarge)
+        Text(
+            text = "Level 3",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
         OutlinedTextField(
             value = textState.value,
             onValueChange = {
@@ -354,13 +361,18 @@ fun Level3Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     textState.value = it
                 }
             },
-            label = { Text("Digite 6 dígitos") },
+            label = { Text("Digite 6 dígitos", color = MaterialTheme.colorScheme.onBackground) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)
+                .padding(bottom = 8.dp),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = WhitePurple,
+                unfocusedBorderColor = WhitePurple
+            )
         )
-        Button(
+        CustomButton(
             onClick = {
                 if (textState.value.length == 6) {
                     val result = checkBullsAndCows(generatedNumber, textState.value)
@@ -372,20 +384,24 @@ fun Level3Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     waitingForInput = false
                 }
             },
+            text = "Enviar",
             modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Enviar")
-        }
+        )
         if (waitingForInput) {
             Text(
                 text = "Esperando usuário digitar...",
                 style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
         Column(modifier = Modifier.padding(top = 16.dp)) {
             storedValues.forEach { (value, result) ->
-                Text(text = "Você enviou: $value   $result", modifier = Modifier.padding(top = 4.dp))
+                Text(
+                    text = "Você enviou: $value   $result",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
         }
         if (gameWon) {
@@ -405,20 +421,19 @@ fun Level3Screen(onBackClick: () -> Unit, onNextLevelClick: () -> Unit) {
                 }
             )
         }
-        Button(
+        CustomButton(
             onClick = onBackClick,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Back")
-        }
+            text = "Back",
+            Modifier.padding(top = 16.dp)
+        )
         Text(
             text = "Resposta: $generatedNumber (Apenas para testes)",
             style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(top = 16.dp)
         )
     }
 }
-
 @Composable
 fun Level4Screen(onBackClick: () -> Unit) {
     val textState = remember { mutableStateOf("") }
@@ -473,16 +488,25 @@ fun Level4Screen(onBackClick: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Level 4", style = MaterialTheme.typography.headlineLarge)
-                Text(text = "Tempo: ${remainingTime}s", style = MaterialTheme.typography.headlineLarge)
+                Text(
+                    text = "Level 4",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = "Tempo: ${remainingTime}s",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
             OutlinedTextField(
                 value = textState.value,
@@ -491,13 +515,18 @@ fun Level4Screen(onBackClick: () -> Unit) {
                         textState.value = it
                     }
                 },
-                label = { Text("Digite 4 dígitos") },
+                label = { Text("Digite 4 dígitos", color = MaterialTheme.colorScheme.onBackground) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = 8.dp),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = WhitePurple,
+                    unfocusedBorderColor = WhitePurple
+                )
             )
-            Button(
+            CustomButton(
                 onClick = {
                     if (textState.value.length == 4) {
                         if (startTime == null) {
@@ -512,20 +541,24 @@ fun Level4Screen(onBackClick: () -> Unit) {
                         waitingForInput = false
                     }
                 },
+                text = "Enviar",
                 modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(text = "Enviar")
-            }
+            )
             if (waitingForInput) {
                 Text(
                     text = "Esperando usuário digitar...",
                     style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }
             Column(modifier = Modifier.padding(top = 16.dp)) {
                 storedValues.forEach { (value, result) ->
-                    Text(text = "Você enviou: $value   $result", modifier = Modifier.padding(top = 4.dp))
+                    Text(
+                        text = "Você enviou: $value   $result",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
             }
             if (gameWon) {
@@ -545,15 +578,15 @@ fun Level4Screen(onBackClick: () -> Unit) {
                     }
                 )
             }
-            Button(
+            CustomButton(
                 onClick = onBackClick,
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text(text = "Back")
-            }
+                text = "Back",
+                Modifier.padding(top = 16.dp)
+            )
             Text(
                 text = "Resposta: $generatedNumber (Apenas para testes)",
                 style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
@@ -563,6 +596,18 @@ fun Level4Screen(onBackClick: () -> Unit) {
 @Composable
 fun Level5Screen(onBackClick: () -> Unit) {
 
+}
+
+@Composable
+fun CustomButton(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        border = BorderStroke(1.dp, WhitePurple),
+        modifier = modifier
+    ) {
+        Text(text = text, color = White)
+    }
 }
 
 fun generateRandomNumber(level: Int): String {
