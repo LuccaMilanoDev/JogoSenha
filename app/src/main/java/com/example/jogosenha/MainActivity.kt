@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jogosenha.ui.theme.JogoSenhaTheme
 import com.example.jogosenha.ui.theme.White
@@ -38,13 +37,28 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+data class Highscore(val attempts: Int = 0, val timeInSeconds: Int = 0)
+
 @Composable
 fun AppContent() {
+    var highscores by remember {
+        mutableStateOf(
+            mapOf(
+                1 to Highscore(attempts = 0, timeInSeconds = 0),
+                2 to Highscore(attempts = 0, timeInSeconds = 0),
+                3 to Highscore(attempts = 0, timeInSeconds = 0),
+                4 to Highscore(attempts = 0, timeInSeconds = 45), // FALTA ESSE
+                5 to Highscore(attempts = 0, timeInSeconds = 50)  // FALTA ESSE
+            )
+        )
+    }
+
     var currentScreen by remember { mutableStateOf("home") }
 
     when (currentScreen) {
         "home" -> HomeScreen(
-            onAllLevelsClick = { currentScreen = "all_levels" }
+            onAllLevelsClick = { currentScreen = "all_levels" },
+            onHighscoreClick = { currentScreen = "highscores" }
         )
         "all_levels" -> AllLevelsScreen(
             onBackClick = { currentScreen = "home" },
@@ -61,28 +75,59 @@ fun AppContent() {
         )
         "user_input" -> UserInputScreen(
             onAllLevelsClick = { currentScreen = "all_levels" },
-            onNextLevelClick = { currentScreen = "level_2" }
+            onNextLevelClick = { currentScreen = "level_2" },
+            updateAttempts = { attempts ->
+                highscores = highscores.toMutableMap().apply {
+                    this[1]?.let { score ->
+                        if (score.attempts == 0 || attempts < score.attempts) {
+                            this[1] = score.copy(attempts = attempts)
+                        }
+                    }
+                }
+            }
         )
         "level_2" -> Level2Screen(
             onAllLevelsClick = { currentScreen = "all_levels" },
-            onNextLevelClick = { currentScreen = "level_3" }
+            onNextLevelClick = { currentScreen = "level_3" },
+            updateAttempts = { attempts ->
+                highscores = highscores.toMutableMap().apply {
+                    this[2]?.let { score ->
+                        if (score.attempts == 0 || attempts < score.attempts) {
+                            this[2] = score.copy(attempts = attempts)
+                        }
+                    }
+                }
+            }
         )
         "level_3" -> Level3Screen(
             onAllLevelsClick = { currentScreen = "all_levels" },
-            onNextLevelClick = { currentScreen = "level_4" }
+            onNextLevelClick = { currentScreen = "level_4" },
+            updateAttempts = { attempts ->
+                highscores = highscores.toMutableMap().apply {
+                    this[3]?.let { score ->
+                        if (score.attempts == 0 || attempts < score.attempts) {
+                            this[3] = score.copy(attempts = attempts)
+                        }
+                    }
+                }
+            }
         )
         "level_4" -> Level4Screen(
-            onAllLevelsClick = { currentScreen = "all_levels" }
+            onAllLevelsClick = { currentScreen = "all_levels" },
+            onNextLevelClick = { currentScreen = "level_5" }// FALTA ESSE
         )
         "level_5" -> Level5Screen(
-            onAllLevelsClick = { currentScreen = "all_levels" }
+            onAllLevelsClick = { currentScreen = "all_levels" }// FALTA ESSE
+        )
+        "highscores" -> HighscoreScreen(
+            onBackClick = { currentScreen = "home" },
+            highscores = highscores
         )
     }
 }
 
-
 @Composable
-fun HomeScreen(onAllLevelsClick: () -> Unit) {
+fun HomeScreen(onAllLevelsClick: () -> Unit, onHighscoreClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,15 +136,21 @@ fun HomeScreen(onAllLevelsClick: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Jogo Senha", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
         Text(
-            text = "Bem-vindo ao Jogo Senha! Clique em Start para começar.",
+            text = "Jogo Senha",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Text(
+            text = "Bem-vindo ao Jogo Senha com níveis de dificuldade! Veja todos os níveis disponíveis e se desafie a concluir tudo!",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
             color = MaterialTheme.colorScheme.onBackground
         )
         CustomButton(onClick = onAllLevelsClick, text = "View All Levels")
+        Spacer(modifier = Modifier.height(16.dp))
+        CustomButton(onClick = onHighscoreClick, text = "Highscores")
     }
 }
 
@@ -135,17 +186,66 @@ fun AllLevelsScreen(onBackClick: () -> Unit, onLevelClick: (Int) -> Unit) {
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        CustomButton(onClick = onBackClick, text = "Back to Menu", modifier = Modifier.padding(top = 16.dp))
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HighscoreScreen(onBackClick: () -> Unit, highscores: Map<Int, Highscore>) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Highscores", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
+        for ((level, score) in highscores) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                border = BorderStroke(1.dp, WhitePurple),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = if (level in 1..3) {
+                            if (score.attempts == 0) "Level $level --> Não concluído"
+                            else "Level $level --> Concluído em ${score.attempts} tentativas!"
+                        } else {
+                            if (score.timeInSeconds == 0) "Level $level --> Não concluído"
+                            else "Level $level --> concluído em ${score.timeInSeconds} segundos!"// SCORE EM SEGUNDOS AQUI
+                        },
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = White
+                    )
+                }
+            }
+        }
         CustomButton(onClick = onBackClick, text = "Back to Menu", modifier = Modifier.padding(top = 16.dp))
     }
 }
 
 @Composable
-fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
+fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, updateAttempts: (Int) -> Unit) {
     val textState = remember { mutableStateOf("") }
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(1) }
     var gameWon by remember { mutableStateOf(false) }
     var waitingForInput by remember { mutableStateOf(true) }
+    var attempts by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -155,62 +255,64 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) 
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-            Text(
-                text = "Level 1",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground
+        Text(
+            text = "Level 1",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        OutlinedTextField(
+            value = textState.value,
+            onValueChange = {
+                if (it.length <= 4 && it.all { char -> char.isDigit() }) {
+                    textState.value = it
+                }
+            },
+            label = { Text("Digite 4 dígitos", color = MaterialTheme.colorScheme.onBackground) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = WhitePurple,
+                unfocusedBorderColor = WhitePurple
             )
-            OutlinedTextField(
-                value = textState.value,
-                onValueChange = {
-                    if (it.length <= 4 && it.all { char -> char.isDigit() }) {
-                        textState.value = it
-                    }
-                },
-                label = { Text("Digite 4 dígitos", color = MaterialTheme.colorScheme.onBackground) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = WhitePurple,
-                    unfocusedBorderColor = WhitePurple
-                )
-            )
-            CustomButton(
-                onClick = {
-                    if (textState.value.length == 4) {
-                        val result = checkBullsAndCows(generatedNumber, textState.value)
-                        storedValues = storedValues + (textState.value to result)
-                        textState.value = ""
-                        if (result == "4B 0C") {
-                            gameWon = true
-                        }
+        )
+        CustomButton(
+            onClick = {
+                if (textState.value.length == 4) {
+                    val result = checkBullsAndCows(generatedNumber, textState.value)
+                    storedValues = storedValues + (textState.value to result)
+                    textState.value = ""
+                    attempts++
+                    waitingForInput = false
+                    if (result == "4B 0C") {
+                        gameWon = true
+                        updateAttempts(attempts)
                         waitingForInput = false
                     }
-                }, text = "Enviar", Modifier.padding(top = 16.dp)
+                }
+            }, text = "Enviar", Modifier.padding(top = 16.dp)
+        )
+        if (waitingForInput) {
+            Text(
+                text = "Esperando usuário digitar...",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(top = 16.dp)
             )
-            if (waitingForInput) {
-                Text(
-                    text = "Esperando usuário digitar...",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-            }
-            LazyColumn(modifier = Modifier.padding(top = 16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally) {
-                item {
-                    storedValues.forEach { (value, result) ->
-                        Text(
-                            text = "Você enviou: $value   $result",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
+        }
+        LazyColumn(modifier = Modifier.padding(top = 16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            item {
+                storedValues.forEach { (value, result) ->
+                    Text(
+                        text = "Você enviou: $value   $result",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
 
                 if (gameWon) {
                     AlertDialog(
@@ -240,20 +342,19 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) 
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 16.dp)
                 )
-
-                }
-
             }
         }
+    }
 }
 
 @Composable
-fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
+fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, updateAttempts: (Int) -> Unit) {
     val textState = remember { mutableStateOf("") }
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(2) }
     var gameWon by remember { mutableStateOf(false) }
     var waitingForInput by remember { mutableStateOf(true) }
+    var attempts by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -292,10 +393,12 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     val result = checkBullsAndCows(generatedNumber, textState.value)
                     storedValues = storedValues + (textState.value to result)
                     textState.value = ""
+                    attempts++
+                    waitingForInput = false
                     if (result == "5B 0C") {
                         gameWon = true
+                        updateAttempts(attempts)
                     }
-                    waitingForInput = false
                 }
             },
             text = "Enviar",
@@ -321,47 +424,47 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     )
                 }
 
-
-            if (gameWon) {
-                AlertDialog(
-                    onDismissRequest = {},
-                    title = { Text(text = "Muito bem!") },
-                    text = { Text(text = "Você acertou o número :)") },
-                    confirmButton = {
-                        TextButton(onClick = onNextLevelClick) {
-                            Text("Próximo Nível")
+                if (gameWon) {
+                    AlertDialog(
+                        onDismissRequest = {},
+                        title = { Text(text = "Muito bem!") },
+                        text = { Text(text = "Você acertou o número :)") },
+                        confirmButton = {
+                            TextButton(onClick = onNextLevelClick) {
+                                Text("Próximo Nível")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = onAllLevelsClick) {
+                                Text("Voltar para os levels")
+                            }
                         }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = onAllLevelsClick) {
-                            Text("Voltar para os levels")
-                        }
-                    }
+                    )
+                }
+                CustomButton(
+                    onClick = onAllLevelsClick,
+                    text = "Voltar para os levels",
+                    Modifier.padding(top = 16.dp)
                 )
-            }
-            CustomButton(
-                onClick = onAllLevelsClick,
-                text = "Voltar para os levels",
-                Modifier.padding(top = 16.dp),
-            )
-            Text(
-                text = "Resposta: $generatedNumber (Apenas para testes)",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(top = 16.dp)
-            )
+                Text(
+                    text = "Resposta: $generatedNumber (Apenas para testes)",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
             }
         }
     }
 }
 
 @Composable
-fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
+fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, updateAttempts: (Int) -> Unit) {
     val textState = remember { mutableStateOf("") }
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(3) }
     var gameWon by remember { mutableStateOf(false) }
     var waitingForInput by remember { mutableStateOf(true) }
+    var attempts by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -400,10 +503,12 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     val result = checkBullsAndCows(generatedNumber, textState.value)
                     storedValues = storedValues + (textState.value to result)
                     textState.value = ""
+                    attempts++
+                    waitingForInput = false
                     if (result == "6B 0C") {
                         gameWon = true
+                        updateAttempts(attempts)
                     }
-                    waitingForInput = false
                 }
             },
             text = "Enviar",
@@ -420,7 +525,6 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
         LazyColumn(modifier = Modifier.padding(top = 16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
-
             item {
                 storedValues.forEach { (value, result) ->
                     Text(
@@ -430,40 +534,41 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                     )
                 }
 
-            if (gameWon) {
-                AlertDialog(
-                    onDismissRequest = {},
-                    title = { Text(text = "Muito bem!") },
-                    text = { Text(text = "Você acertou o número :)") },
-                    confirmButton = {
-                        TextButton(onClick = onNextLevelClick) {
-                            Text("Próximo Nível")
+                if (gameWon) {
+                    AlertDialog(
+                        onDismissRequest = {},
+                        title = { Text(text = "Muito bem!") },
+                        text = { Text(text = "Você acertou o número :)") },
+                        confirmButton = {
+                            TextButton(onClick = onNextLevelClick) {
+                                Text("Próximo Nível")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = onAllLevelsClick) {
+                                Text("Voltar para os levels")
+                            }
                         }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = onAllLevelsClick) {
-                            Text("Voltar para os levels")
-                        }
-                    }
+                    )
+                }
+                CustomButton(
+                    onClick = onAllLevelsClick,
+                    text = "Voltar para os levels",
+                    Modifier.padding(top = 16.dp)
                 )
-            }
-            CustomButton(
-                onClick = onAllLevelsClick,
-                text = "Voltar para os levels",
-                Modifier.padding(top = 16.dp)
-            )
-            Text(
-                text = "Resposta: $generatedNumber (Apenas para testes)",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(top = 16.dp)
-            )
+                Text(
+                    text = "Resposta: $generatedNumber (Apenas para testes)",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
             }
         }
     }
 }
+
 @Composable
-fun Level4Screen(onAllLevelsClick: () -> Unit) {
+fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
     val textState = remember { mutableStateOf("") }
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(1) }
@@ -598,9 +703,9 @@ fun Level4Screen(onAllLevelsClick: () -> Unit) {
                         title = { Text(text = "Muito bem!") },
                         text = { Text(text = "Você acertou o número :)") },
                         confirmButton = {
-                            /*TextButton(onClick = onNextLevelClick) {
+                            TextButton(onClick = onNextLevelClick) {
                                 Text("Próximo Nível")
-                            }*/
+                            }
                         },
                         dismissButton = {
                             TextButton(onClick = onAllLevelsClick) {
