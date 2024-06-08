@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -137,20 +138,20 @@ fun HomeScreen(onAllLevelsClick: () -> Unit, onHighscoreClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Jogo Senha",
+            text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
         Text(
-            text = "Bem-vindo ao Jogo Senha com níveis de dificuldade! Veja todos os níveis disponíveis e se desafie a concluir tudo!",
+            text = stringResource(id = R.string.welcome_text),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
             color = MaterialTheme.colorScheme.onBackground
         )
-        CustomButton(onClick = onAllLevelsClick, text = "View All Levels")
+        CustomButton(onClick = onAllLevelsClick, text = stringResource(id = R.string.view_all_levels))
         Spacer(modifier = Modifier.height(16.dp))
-        CustomButton(onClick = onHighscoreClick, text = "Highscores")
+        CustomButton(onClick = onHighscoreClick, text = stringResource(id = R.string.highscores))
     }
 }
 
@@ -165,7 +166,7 @@ fun AllLevelsScreen(onBackClick: () -> Unit, onLevelClick: (Int) -> Unit) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "All Levels", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
+        Text(text = stringResource(id = R.string.all_levels), style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
         for (level in 1..5) {
             Card(
                 modifier = Modifier
@@ -182,14 +183,14 @@ fun AllLevelsScreen(onBackClick: () -> Unit, onLevelClick: (Int) -> Unit) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Level $level", style = MaterialTheme.typography.bodyLarge, color = White)
+                    Text(text = stringResource(id = R.string.level, level), style = MaterialTheme.typography.bodyLarge, color = White)
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CustomButton(onClick = onBackClick, text = "Back to Menu", modifier = Modifier.padding(top = 16.dp))
+        CustomButton(onClick = onBackClick, text = stringResource(id = R.string.back_to_menu), modifier = Modifier.padding(top = 16.dp))
     }
 }
 
@@ -204,7 +205,7 @@ fun HighscoreScreen(onBackClick: () -> Unit, highscores: Map<Int, Highscore>) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Highscores", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
+        Text(text = stringResource(id = R.string.highscores), style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onBackground)
         for ((level, score) in highscores) {
             Card(
                 modifier = Modifier
@@ -222,11 +223,11 @@ fun HighscoreScreen(onBackClick: () -> Unit, highscores: Map<Int, Highscore>) {
                 ) {
                     Text(
                         text = if (level in 1..3) {
-                            if (score.attempts == 0) "Level $level --> Não concluído"
-                            else "Level $level --> Concluído em ${score.attempts} tentativas!"
+                            if (score.attempts == 0) stringResource(id = R.string.level_not_completed, level)
+                            else stringResource(id = R.string.level_completed_attempts, level, score.attempts)
                         } else {
-                            if (score.timeInSeconds == 0) "Level $level --> Não concluído"
-                            else "Level $level --> concluído em ${score.timeInSeconds} segundos!"// SCORE EM SEGUNDOS AQUI
+                            if (score.timeInSeconds == 0) stringResource(id = R.string.level_not_completed, level)
+                            else stringResource(id = R.string.level_completed_seconds, level, score.timeInSeconds)// SCORE EM SEGUNDOS AQUI
                         },
                         style = MaterialTheme.typography.bodyLarge,
                         color = White
@@ -234,7 +235,7 @@ fun HighscoreScreen(onBackClick: () -> Unit, highscores: Map<Int, Highscore>) {
                 }
             }
         }
-        CustomButton(onClick = onBackClick, text = "Back to Menu", modifier = Modifier.padding(top = 16.dp))
+        CustomButton(onClick = onBackClick, text = stringResource(id = R.string.back_to_menu), modifier = Modifier.padding(top = 16.dp))
     }
 }
 
@@ -256,7 +257,7 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Level 1",
+            text = stringResource(id = R.string.level_1),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -267,7 +268,7 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, 
                     textState.value = it
                 }
             },
-            label = { Text("Digite 4 dígitos", color = MaterialTheme.colorScheme.onBackground) },
+            label = { Text(stringResource(id = R.string.input_digits), color = MaterialTheme.colorScheme.onBackground) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth()
@@ -292,11 +293,11 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, 
                         waitingForInput = false
                     }
                 }
-            }, text = "Enviar", Modifier.padding(top = 16.dp)
+            }, text = stringResource(id = R.string.send), Modifier.padding(top = 16.dp)
         )
         if (waitingForInput) {
             Text(
-                text = "Esperando usuário digitar...",
+                text = stringResource(id = R.string.waiting_for_input),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 16.dp)
@@ -308,7 +309,7 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, 
             item {
                 storedValues.forEach { (value, result) ->
                     Text(
-                        text = "Você enviou: $value   $result",
+                        text = stringResource(id = R.string.user_sent, value, result),
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(top = 4.dp)
                     )
@@ -317,27 +318,27 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, 
                 if (gameWon) {
                     AlertDialog(
                         onDismissRequest = {},
-                        title = { Text(text = "Muito bem!") },
-                        text = { Text(text = "Você acertou o número :)") },
+                        title = { Text(text = stringResource(id = R.string.well_done)) },
+                        text = { Text(text = stringResource(id = R.string.correct_number)) },
                         confirmButton = {
                             TextButton(onClick = onNextLevelClick) {
-                                Text("Próximo Nível")
+                                Text(stringResource(id = R.string.next_level))
                             }
                         },
                         dismissButton = {
                             TextButton(onClick = onAllLevelsClick) {
-                                Text("Voltar para os levels")
+                                Text(stringResource(id = R.string.back_to_menu))
                             }
                         }
                     )
                 }
                 CustomButton(
                     onClick = onAllLevelsClick,
-                    text = "Voltar para os levels",
+                    text = stringResource(id = R.string.back_to_menu),
                     Modifier.padding(top = 16.dp)
                 )
                 Text(
-                    text = "Resposta: $generatedNumber (Apenas para testes)",
+                    text = stringResource(id = R.string.answer, generatedNumber),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 16.dp)
@@ -365,7 +366,7 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Level 2",
+            text = stringResource(id = R.string.level_2),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -376,7 +377,7 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                     textState.value = it
                 }
             },
-            label = { Text("Digite 5 dígitos", color = MaterialTheme.colorScheme.onBackground) },
+            label = { Text(stringResource(id = R.string.input_5_digits), color = MaterialTheme.colorScheme.onBackground) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth()
@@ -401,12 +402,12 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                     }
                 }
             },
-            text = "Enviar",
+            text = stringResource(id = R.string.send),
             modifier = Modifier.padding(top = 16.dp)
         )
         if (waitingForInput) {
             Text(
-                text = "Esperando usuário digitar...",
+                text = stringResource(id = R.string.waiting_for_input),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 16.dp)
@@ -418,7 +419,7 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
             item {
                 storedValues.forEach { (value, result) ->
                     Text(
-                        text = "Você enviou: $value   $result",
+                        text = stringResource(id = R.string.user_sent, value, result),
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(top = 4.dp)
                     )
@@ -427,27 +428,27 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                 if (gameWon) {
                     AlertDialog(
                         onDismissRequest = {},
-                        title = { Text(text = "Muito bem!") },
-                        text = { Text(text = "Você acertou o número :)") },
+                        title = { Text(text = stringResource(id = R.string.well_done)) },
+                        text = { Text(text = stringResource(id = R.string.correct_number)) },
                         confirmButton = {
                             TextButton(onClick = onNextLevelClick) {
-                                Text("Próximo Nível")
+                                Text(stringResource(id = R.string.next_level))
                             }
                         },
                         dismissButton = {
                             TextButton(onClick = onAllLevelsClick) {
-                                Text("Voltar para os levels")
+                                Text(stringResource(id = R.string.back_to_levels))
                             }
                         }
                     )
                 }
                 CustomButton(
                     onClick = onAllLevelsClick,
-                    text = "Voltar para os levels",
+                    text = stringResource(id = R.string.back_to_levels),
                     Modifier.padding(top = 16.dp)
                 )
                 Text(
-                    text = "Resposta: $generatedNumber (Apenas para testes)",
+                    text = stringResource(id = R.string.answer, generatedNumber),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 16.dp)
@@ -475,7 +476,7 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Level 3",
+            text = stringResource(id = R.string.level_3),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -486,7 +487,7 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                     textState.value = it
                 }
             },
-            label = { Text("Digite 6 dígitos", color = MaterialTheme.colorScheme.onBackground) },
+            label = { Text(stringResource(id = R.string.input_6_digits), color = MaterialTheme.colorScheme.onBackground) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth()
@@ -511,12 +512,12 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                     }
                 }
             },
-            text = "Enviar",
+            text = stringResource(id = R.string.send),
             modifier = Modifier.padding(top = 16.dp)
         )
         if (waitingForInput) {
             Text(
-                text = "Esperando usuário digitar...",
+                text = stringResource(id = R.string.waiting_for_input),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 16.dp)
@@ -528,7 +529,7 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
             item {
                 storedValues.forEach { (value, result) ->
                     Text(
-                        text = "Você enviou: $value   $result",
+                        text = stringResource(id = R.string.user_sent, value, result),
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(top = 4.dp)
                     )
@@ -537,27 +538,27 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                 if (gameWon) {
                     AlertDialog(
                         onDismissRequest = {},
-                        title = { Text(text = "Muito bem!") },
-                        text = { Text(text = "Você acertou o número :)") },
+                        title = { Text(text = stringResource(id = R.string.well_done)) },
+                        text = { Text(text = stringResource(id = R.string.correct_number)) },
                         confirmButton = {
                             TextButton(onClick = onNextLevelClick) {
-                                Text("Próximo Nível")
+                                Text(stringResource(id = R.string.next_level))
                             }
                         },
                         dismissButton = {
                             TextButton(onClick = onAllLevelsClick) {
-                                Text("Voltar para os levels")
+                                Text(stringResource(id = R.string.back_to_levels))
                             }
                         }
                     )
                 }
                 CustomButton(
                     onClick = onAllLevelsClick,
-                    text = "Voltar para os levels",
+                    text = stringResource(id = R.string.back_to_levels),
                     Modifier.padding(top = 16.dp)
                 )
                 Text(
-                    text = "Resposta: $generatedNumber (Apenas para testes)",
+                    text = stringResource(id = R.string.answer, generatedNumber),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 16.dp)
@@ -566,6 +567,7 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
         }
     }
 }
+
 
 @Composable
 fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
@@ -593,12 +595,11 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
     if (isTimeOver.value && !gameWon) {
         AlertDialog(
             onDismissRequest = {},
-            title = { Text(text = "Tempo Esgotado!") },
-            text = { Text(text = "O tempo acabou. Você deseja tentar novamente ou voltar para a tela inicial?") },
+            title = { Text(text = stringResource(id = R.string.time_up)) },
+            text = { Text(text = stringResource(id = R.string.retry_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        // Reset state for retry
                         textState.value = ""
                         storedValues = listOf()
                         gameWon = false
@@ -608,12 +609,12 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                         isTimeOver.value = false
                     }
                 ) {
-                    Text("Tentar Novamente")
+                    Text(stringResource(id = R.string.try_again))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onAllLevelsClick) {
-                    Text("Voltar para os levels")
+                    Text(stringResource(id = R.string.back_to_levels))
                 }
             }
         )
@@ -631,7 +632,7 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Level 4",
+                    text = stringResource(id = R.string.level_4),
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -648,7 +649,7 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                         textState.value = it
                     }
                 },
-                label = { Text("Digite 4 dígitos", color = MaterialTheme.colorScheme.onBackground) },
+                label = { Text(stringResource(id = R.string.input_4_digits), color = MaterialTheme.colorScheme.onBackground) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -674,12 +675,12 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                         waitingForInput = false
                     }
                 },
-                text = "Enviar",
+                text = stringResource(id = R.string.send),
                 modifier = Modifier.padding(top = 16.dp)
             )
             if (waitingForInput) {
                 Text(
-                    text = "Esperando usuário digitar...",
+                    text = stringResource(id = R.string.waiting_for_input),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 16.dp)
@@ -691,40 +692,40 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                 item {
                     storedValues.forEach { (value, result) ->
                         Text(
-                            text = "Você enviou: $value   $result",
+                            text = stringResource(id = R.string.user_sent, value, result),
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.padding(top = 4.dp)
                         )
                     }
 
-                if (gameWon) {
-                    AlertDialog(
-                        onDismissRequest = {},
-                        title = { Text(text = "Muito bem!") },
-                        text = { Text(text = "Você acertou o número :)") },
-                        confirmButton = {
-                            TextButton(onClick = onNextLevelClick) {
-                                Text("Próximo Nível")
+                    if (gameWon) {
+                        AlertDialog(
+                            onDismissRequest = {},
+                            title = { Text(text = stringResource(id = R.string.well_done)) },
+                            text = { Text(text = stringResource(id = R.string.correct_number)) },
+                            confirmButton = {
+                                /*TextButton(onClick = onNextLevelClick) {
+                                    Text("Próximo Nível")
+                                }*/
+                            },
+                            dismissButton = {
+                                TextButton(onClick = onAllLevelsClick) {
+                                    Text(stringResource(id = R.string.back_to_levels))
+                                }
                             }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = onAllLevelsClick) {
-                                Text("Voltar para os levels")
-                            }
-                        }
+                        )
+                    }
+                    CustomButton(
+                        onClick = onAllLevelsClick,
+                        text = stringResource(id = R.string.back_to_levels),
+                        Modifier.padding(top = 16.dp)
                     )
-                }
-                CustomButton(
-                    onClick = onAllLevelsClick,
-                    text = "Voltar para os levels",
-                    Modifier.padding(top = 16.dp)
-                )
-                Text(
-                    text = "Resposta: $generatedNumber (Apenas para testes)",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                    Text(
+                        text = stringResource(id = R.string.answer, generatedNumber),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
                 }
             }
         }
@@ -757,12 +758,11 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
     if (isTimeOver.value && !gameWon) {
         AlertDialog(
             onDismissRequest = {},
-            title = { Text(text = "Tempo Esgotado!") },
-            text = { Text(text = "O tempo acabou. Você deseja tentar novamente ou voltar para a tela inicial?") },
+            title = { Text(text = stringResource(id = R.string.time_up)) },
+            text = { Text(text = stringResource(id = R.string.retry_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
-
                         textState.value = ""
                         storedValues = listOf()
                         gameWon = false
@@ -772,12 +772,12 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                         isTimeOver.value = false
                     }
                 ) {
-                    Text("Tentar Novamente")
+                    Text(stringResource(id = R.string.try_again))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onAllLevelsClick) {
-                    Text("Voltar para os levels")
+                    Text(stringResource(id = R.string.back_to_levels))
                 }
             }
         )
@@ -795,7 +795,7 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Level 5",
+                    text = stringResource(id = R.string.level_5),
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -812,7 +812,7 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                         textState.value = it
                     }
                 },
-                label = { Text("Digite 4 dígitos", color = MaterialTheme.colorScheme.onBackground) },
+                label = { Text(stringResource(id = R.string.input_4_digits), color = MaterialTheme.colorScheme.onBackground) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -838,12 +838,12 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                         waitingForInput = false
                     }
                 },
-                text = "Enviar",
+                text = stringResource(id = R.string.send),
                 modifier = Modifier.padding(top = 16.dp)
             )
             if (waitingForInput) {
                 Text(
-                    text = "Esperando usuário digitar...",
+                    text = stringResource(id = R.string.waiting_for_input),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 16.dp)
@@ -855,7 +855,7 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                 item {
                     storedValues.forEach { (value, result) ->
                         Text(
-                            text = "Você enviou: $value   $result",
+                            text = stringResource(id = R.string.user_sent, value, result),
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier.padding(top = 4.dp)
                         )
@@ -864,8 +864,8 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                     if (gameWon) {
                         AlertDialog(
                             onDismissRequest = {},
-                            title = { Text(text = "Muito bem!") },
-                            text = { Text(text = "Você acertou o número :)") },
+                            title = { Text(text = stringResource(id = R.string.well_done)) },
+                            text = { Text(text = stringResource(id = R.string.correct_number)) },
                             confirmButton = {
                                 /*TextButton(onClick = onNextLevelClick) {
                                     Text("Próximo Nível")
@@ -873,18 +873,18 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                             },
                             dismissButton = {
                                 TextButton(onClick = onAllLevelsClick) {
-                                    Text("Voltar para os levels")
+                                    Text(stringResource(id = R.string.back_to_levels))
                                 }
                             }
                         )
                     }
                     CustomButton(
                         onClick = onAllLevelsClick,
-                        text = "Voltar para os levels",
+                        text = stringResource(id = R.string.back_to_levels),
                         Modifier.padding(top = 16.dp)
                     )
                     Text(
-                        text = "Resposta: $generatedNumber (Apenas para testes)",
+                        text = stringResource(id = R.string.answer, generatedNumber),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.padding(top = 16.dp)
@@ -894,7 +894,6 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
         }
     }
 }
-
 
 @Composable
 fun CustomButton(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) {

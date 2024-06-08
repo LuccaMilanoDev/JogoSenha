@@ -1,4 +1,48 @@
+<!-- res/values/strings.xml -->
 <resources>
-    <string name="app_name">JogoSenha</string>
-    <string name="description">Bem-vindo ao Jogo Senha! Clique em Start para começar.</string>
+    <string name="app_name">Jogo Senha</string>
+    <string name="welcome_text">Bem-vindo ao Jogo Senha com níveis de dificuldade! Veja todos os níveis disponíveis e se desafie a concluir tudo!</string>
+    <string name="view_all_levels">View All Levels</string>
+    <string name="highscores">Highscores</string>
+
+    <!-- Strings para AllLevelsScreen -->
+    <string name="all_levels">All Levels</string>
+    <string name="level">Level %1$d</string>
+    <string name="back_to_menu">Back to Menu</string>
+    
+    <!-- Strings para HighscoreScreen -->
+    <string name="highscores">Highscores</string>
+    <string name="level_not_completed">Level %1$d --> Não concluído</string>
+    <string name="level_completed_attempts">Level %1$d --> Concluído em %2$d tentativas!</string>
+    <string name="level_completed_seconds">Level %1$d --> concluído em %2$d segundos!</string>
+    
+    <!-- Strings para UserInputScreen & Strings gerais -->
+    <string name="level_1">Level 1</string>
+    <string name="input_digits">Digite 4 dígitos</string>
+    <string name="send">Enviar</string>
+    <string name="waiting_for_input">Esperando usuário digitar...</string>
+    <string name="user_sent">Você enviou: %1$s   %2$s</string>
+    <string name="well_done">Muito bem!</string>
+    <string name="correct_number">Você acertou o número :)</string>
+    <string name="next_level">Próximo Nível</string>
+    <string name="answer">Resposta: %1$s (Apenas para testes)</string>
+
+    <!-- Strings para Level2Screen -->
+    <string name="level_2">Level 2</string>
+    <string name="input_5_digits">Digite 5 dígitos</string>
+    
+    <!-- Strings para Level3Screen -->
+    <string name="level_3">Level 3</string>
+    <string name="input_6_digits">Digite 6 dígitos</string>
+
+    <!-- Strings para Level4Screen -->
+    <string name="level_4">Level 4</string>
+    <string name="input_4_digits">Digite 4 dígitos</string>
+    <string name="time_up">Tempo Esgotado!</string>
+    <string name="try_again">Tentar Novamente</string>
+    <string name="back_to_levels">Voltar para os levels</string>
+    <string name="retry_message">O tempo acabou. Você deseja tentar novamente ou voltar para a tela inicial?</string>
+
+    <!-- Strings para Level5Screen -->
+    <string name="level_5">Level 5</string>
 </resources>
