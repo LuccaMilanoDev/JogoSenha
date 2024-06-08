@@ -11,7 +11,6 @@
     <string name="back_to_menu">Back to Menu</string>
     
     <!-- Strings para HighscoreScreen -->
-    <string name="highscores">Highscores</string>
     <string name="level_not_completed">Level %1$d --> Não concluído</string>
     <string name="level_completed_attempts">Level %1$d --> Concluído em %2$d tentativas!</string>
     <string name="level_completed_seconds">Level %1$d --> concluído em %2$d segundos!</string>
