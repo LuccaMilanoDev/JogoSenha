@@ -322,12 +322,16 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, 
                         text = { Text(text = stringResource(id = R.string.correct_number)) },
                         confirmButton = {
                             TextButton(onClick = onNextLevelClick) {
-                                Text(stringResource(id = R.string.next_level))
+                                Text(stringResource(id = R.string.next_level),
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
                         },
                         dismissButton = {
                             TextButton(onClick = onAllLevelsClick) {
-                                Text(stringResource(id = R.string.back_to_menu))
+                                Text(stringResource(id = R.string.back_to_menu),
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
                         }
                     )
@@ -432,12 +436,16 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                         text = { Text(text = stringResource(id = R.string.correct_number)) },
                         confirmButton = {
                             TextButton(onClick = onNextLevelClick) {
-                                Text(stringResource(id = R.string.next_level))
+                                Text(stringResource(id = R.string.next_level),
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
                         },
                         dismissButton = {
                             TextButton(onClick = onAllLevelsClick) {
-                                Text(stringResource(id = R.string.back_to_levels))
+                                Text(stringResource(id = R.string.back_to_levels),
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
                         }
                     )
@@ -542,12 +550,16 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                         text = { Text(text = stringResource(id = R.string.correct_number)) },
                         confirmButton = {
                             TextButton(onClick = onNextLevelClick) {
-                                Text(stringResource(id = R.string.next_level))
+                                Text(stringResource(id = R.string.next_level),
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
                         },
                         dismissButton = {
                             TextButton(onClick = onAllLevelsClick) {
-                                Text(stringResource(id = R.string.back_to_levels))
+                                Text(stringResource(id = R.string.back_to_levels),
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
                         }
                     )
@@ -609,12 +621,15 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                         isTimeOver.value = false
                     }
                 ) {
-                    Text(stringResource(id = R.string.try_again))
+                    Text(stringResource(id = R.string.try_again),
+                        color = MaterialTheme.colorScheme.onBackground)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onAllLevelsClick) {
-                    Text(stringResource(id = R.string.back_to_levels))
+                    Text(stringResource(id = R.string.back_to_levels),
+                            color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
             }
         )
@@ -704,13 +719,17 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                             title = { Text(text = stringResource(id = R.string.well_done)) },
                             text = { Text(text = stringResource(id = R.string.correct_number)) },
                             confirmButton = {
-                                /*TextButton(onClick = onNextLevelClick) {
-                                    Text("Próximo Nível")
-                                }*/
+                                TextButton(onClick = onNextLevelClick) {
+                                    Text(stringResource(id = R.string.next_level),
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
                             },
                             dismissButton = {
                                 TextButton(onClick = onAllLevelsClick) {
-                                    Text(stringResource(id = R.string.back_to_levels))
+                                    Text(stringResource(id = R.string.back_to_levels),
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
                                 }
                             }
                         )
@@ -772,12 +791,16 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                         isTimeOver.value = false
                     }
                 ) {
-                    Text(stringResource(id = R.string.try_again))
+                    Text(stringResource(id = R.string.try_again),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = onAllLevelsClick) {
-                    Text(stringResource(id = R.string.back_to_levels))
+                    Text(stringResource(id = R.string.back_to_levels),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
             }
         )
@@ -873,7 +896,9 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                             },
                             dismissButton = {
                                 TextButton(onClick = onAllLevelsClick) {
-                                    Text(stringResource(id = R.string.back_to_levels))
+                                    Text(stringResource(id = R.string.back_to_levels),
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
                                 }
                             }
                         )
