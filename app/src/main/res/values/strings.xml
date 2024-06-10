@@ -25,7 +25,7 @@
     <string name="correct_number">Você acertou o número :)</string>
     <string name="next_level">Próximo Nível</string>
     <string name="answer">Resposta: %1$s (Apenas para testes)</string>
-
+    <string name="answerToPick">Obter Resposta</string>
     <!-- Strings para Level2Screen -->
     <string name="level_2">Level 2</string>
     <string name="input_5_digits">Digite 5 dígitos</string>

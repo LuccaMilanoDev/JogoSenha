@@ -265,6 +265,7 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, 
     var gameWon by remember { mutableStateOf(false) }
     var waitingForInput by remember { mutableStateOf(true) }
     var attempts by remember { mutableIntStateOf(0) }
+    var revealAnswer by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -359,12 +360,22 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, 
                     text = stringResource(id = R.string.back_to_menu),
                     Modifier.padding(top = 16.dp)
                 )
-                Text(
-                    text = stringResource(id = R.string.answer, generatedNumber),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .clickable { revealAnswer = true }
+                        .background(
+                            if (revealAnswer) Color.Transparent else Color.Black,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = if (revealAnswer) stringResource(id = R.string.answer, generatedNumber) else  stringResource(id = R.string.answerToPick),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
     }
@@ -378,6 +389,7 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
     var gameWon by remember { mutableStateOf(false) }
     var waitingForInput by remember { mutableStateOf(true) }
     var attempts by remember { mutableIntStateOf(0) }
+    var revealAnswer by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -473,12 +485,22 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                     text = stringResource(id = R.string.back_to_levels),
                     Modifier.padding(top = 16.dp)
                 )
-                Text(
-                    text = stringResource(id = R.string.answer, generatedNumber),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .clickable { revealAnswer = true }
+                        .background(
+                            if (revealAnswer) Color.Transparent else Color.Black,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = if (revealAnswer) stringResource(id = R.string.answer, generatedNumber) else  stringResource(id = R.string.answerToPick),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
     }
@@ -492,6 +514,7 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
     var gameWon by remember { mutableStateOf(false) }
     var waitingForInput by remember { mutableStateOf(true) }
     var attempts by remember { mutableIntStateOf(0) }
+    var revealAnswer by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -587,12 +610,22 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                     text = stringResource(id = R.string.back_to_levels),
                     Modifier.padding(top = 16.dp)
                 )
-                Text(
-                    text = stringResource(id = R.string.answer, generatedNumber),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .clickable { revealAnswer = true }
+                        .background(
+                            if (revealAnswer) Color.Transparent else Color.Black,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = if (revealAnswer) stringResource(id = R.string.answer, generatedNumber) else  stringResource(id = R.string.answerToPick),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
     }
@@ -610,6 +643,7 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
     var remainingTime by remember { mutableStateOf(60) }
     val isTimeOver = remember { mutableStateOf(false) }
     val elapsedTime by remember { derivedStateOf { startTime?.let { (System.currentTimeMillis() - it) / 1000 }?.toInt() ?: 0 } }
+    var revealAnswer by remember { mutableStateOf(false) }
 
     LaunchedEffect(startTime) {
         if (startTime != null) {
@@ -752,12 +786,22 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
                         text = stringResource(id = R.string.back_to_levels),
                         Modifier.padding(top = 16.dp)
                     )
-                    Text(
-                        text = stringResource(id = R.string.answer, generatedNumber),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .clickable { revealAnswer = true }
+                            .background(
+                                if (revealAnswer) Color.Transparent else Color.Black,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = if (revealAnswer) stringResource(id = R.string.answer, generatedNumber) else  stringResource(id = R.string.answerToPick),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                 }
             }
         }
@@ -775,6 +819,7 @@ fun Level5Screen(onAllLevelsClick: () -> Unit, updateTime: (Int) -> Unit) {
     var remainingTime by remember { mutableStateOf(30) }
     val isTimeOver = remember { mutableStateOf(false) }
     val elapsedTime by remember { derivedStateOf { startTime?.let { (System.currentTimeMillis() - it) / 1000 }?.toInt() ?: 0 } }
+    var revealAnswer by remember { mutableStateOf(false) }
 
     LaunchedEffect(startTime) {
         if (startTime != null) {
@@ -912,12 +957,22 @@ fun Level5Screen(onAllLevelsClick: () -> Unit, updateTime: (Int) -> Unit) {
                         text = stringResource(id = R.string.back_to_levels),
                         Modifier.padding(top = 16.dp)
                     )
-                    Text(
-                        text = stringResource(id = R.string.answer, generatedNumber),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .clickable { revealAnswer = true }
+                            .background(
+                                if (revealAnswer) Color.Transparent else Color.Black,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = if (revealAnswer) stringResource(id = R.string.answer, generatedNumber) else stringResource(id = R.string.answerToPick),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                 }
             }
         }
