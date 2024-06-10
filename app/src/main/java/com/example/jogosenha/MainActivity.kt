@@ -48,8 +48,8 @@ fun AppContent() {
                 1 to Highscore(attempts = 0, timeInSeconds = 0),
                 2 to Highscore(attempts = 0, timeInSeconds = 0),
                 3 to Highscore(attempts = 0, timeInSeconds = 0),
-                4 to Highscore(attempts = 0, timeInSeconds = 45), // FALTA ESSE
-                5 to Highscore(attempts = 0, timeInSeconds = 50)  // FALTA ESSE
+                4 to Highscore(attempts = 0, timeInSeconds = 0), // FALTA ESSE
+                5 to Highscore(attempts = 0, timeInSeconds = 0)  // FALTA ESSE
             )
         )
     }
@@ -115,10 +115,28 @@ fun AppContent() {
         )
         "level_4" -> Level4Screen(
             onAllLevelsClick = { currentScreen = "all_levels" },
-            onNextLevelClick = { currentScreen = "level_5" }// FALTA ESSE
+            onNextLevelClick = { currentScreen = "level_5" },
+            updateTime = { timeInSeconds ->
+                highscores = highscores.toMutableMap().apply {
+                    this[4]?.let { score ->
+                        if (score.timeInSeconds == 0 || timeInSeconds < score.timeInSeconds) {
+                            this[4] = score.copy(timeInSeconds = timeInSeconds)
+                        }
+                    }
+                }
+            }
         )
         "level_5" -> Level5Screen(
-            onAllLevelsClick = { currentScreen = "all_levels" }// FALTA ESSE
+            onAllLevelsClick = { currentScreen = "all_levels" },
+            updateTime = { timeInSeconds ->
+                highscores = highscores.toMutableMap().apply {
+                    this[5]?.let { score ->
+                        if (score.timeInSeconds == 0 || timeInSeconds < score.timeInSeconds) {
+                            this[5] = score.copy(timeInSeconds = timeInSeconds)
+                        }
+                    }
+                }
+            }
         )
         "highscores" -> HighscoreScreen(
             onBackClick = { currentScreen = "home" },
@@ -582,7 +600,7 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
 
 
 @Composable
-fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
+fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, updateTime: (Int) -> Unit) {
     val textState = remember { mutableStateOf("") }
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(1) }
@@ -591,6 +609,7 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
     var startTime by remember { mutableStateOf<Long?>(null) }
     var remainingTime by remember { mutableStateOf(60) }
     val isTimeOver = remember { mutableStateOf(false) }
+    val elapsedTime by remember { derivedStateOf { startTime?.let { (System.currentTimeMillis() - it) / 1000 }?.toInt() ?: 0 } }
 
     LaunchedEffect(startTime) {
         if (startTime != null) {
@@ -621,15 +640,12 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                         isTimeOver.value = false
                     }
                 ) {
-                    Text(stringResource(id = R.string.try_again),
-                        color = MaterialTheme.colorScheme.onBackground)
+                    Text(stringResource(id = R.string.try_again), color = MaterialTheme.colorScheme.onBackground)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onAllLevelsClick) {
-                    Text(stringResource(id = R.string.back_to_levels),
-                            color = MaterialTheme.colorScheme.onBackground
-                    )
+                    Text(stringResource(id = R.string.back_to_levels), color = MaterialTheme.colorScheme.onBackground)
                 }
             }
         )
@@ -686,6 +702,7 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                         textState.value = ""
                         if (result == "4B 0C") {
                             gameWon = true
+                            updateTime(elapsedTime)
                         }
                         waitingForInput = false
                     }
@@ -720,16 +737,12 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                             text = { Text(text = stringResource(id = R.string.correct_number)) },
                             confirmButton = {
                                 TextButton(onClick = onNextLevelClick) {
-                                    Text(stringResource(id = R.string.next_level),
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
+                                    Text(stringResource(id = R.string.next_level), color = MaterialTheme.colorScheme.onBackground)
                                 }
                             },
                             dismissButton = {
                                 TextButton(onClick = onAllLevelsClick) {
-                                    Text(stringResource(id = R.string.back_to_levels),
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
+                                    Text(stringResource(id = R.string.back_to_levels), color = MaterialTheme.colorScheme.onBackground)
                                 }
                             }
                         )
@@ -752,7 +765,7 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
 }
 
 @Composable
-fun Level5Screen(onAllLevelsClick: () -> Unit) {
+fun Level5Screen(onAllLevelsClick: () -> Unit, updateTime: (Int) -> Unit) {
     val textState = remember { mutableStateOf("") }
     var storedValues by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     val generatedNumber = remember { generateRandomNumber(1) }
@@ -761,6 +774,7 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
     var startTime by remember { mutableStateOf<Long?>(null) }
     var remainingTime by remember { mutableStateOf(30) }
     val isTimeOver = remember { mutableStateOf(false) }
+    val elapsedTime by remember { derivedStateOf { startTime?.let { (System.currentTimeMillis() - it) / 1000 }?.toInt() ?: 0 } }
 
     LaunchedEffect(startTime) {
         if (startTime != null) {
@@ -791,16 +805,12 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                         isTimeOver.value = false
                     }
                 ) {
-                    Text(stringResource(id = R.string.try_again),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                    Text(stringResource(id = R.string.try_again), color = MaterialTheme.colorScheme.onBackground)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onAllLevelsClick) {
-                    Text(stringResource(id = R.string.back_to_levels),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                    Text(stringResource(id = R.string.back_to_levels), color = MaterialTheme.colorScheme.onBackground)
                 }
             }
         )
@@ -857,6 +867,7 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                         textState.value = ""
                         if (result == "4B 0C") {
                             gameWon = true
+                            updateTime(if (storedValues.size == 1) 0 else elapsedTime)
                         }
                         waitingForInput = false
                     }
@@ -890,15 +901,8 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                             title = { Text(text = stringResource(id = R.string.well_done)) },
                             text = { Text(text = stringResource(id = R.string.correct_number)) },
                             confirmButton = {
-                                /*TextButton(onClick = onNextLevelClick) {
-                                    Text("Próximo Nível")
-                                }*/
-                            },
-                            dismissButton = {
                                 TextButton(onClick = onAllLevelsClick) {
-                                    Text(stringResource(id = R.string.back_to_levels),
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
+                                    Text(stringResource(id = R.string.back_to_levels), color = MaterialTheme.colorScheme.onBackground)
                                 }
                             }
                         )
@@ -919,6 +923,7 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
         }
     }
 }
+
 
 @Composable
 fun CustomButton(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) {
