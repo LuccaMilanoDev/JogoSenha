@@ -283,7 +283,7 @@ fun UserInputScreen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, 
             onClick = {
                 if (textState.value.length == 4) {
                     val result = checkBullsAndCows(generatedNumber, textState.value)
-                    storedValues = storedValues + (textState.value to result)
+                    storedValues = listOf(textState.value to result) + storedValues
                     textState.value = ""
                     attempts++
                     waitingForInput = false
@@ -396,7 +396,7 @@ fun Level2Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
             onClick = {
                 if (textState.value.length == 5) {
                     val result = checkBullsAndCows(generatedNumber, textState.value)
-                    storedValues = storedValues + (textState.value to result)
+                    storedValues = listOf(textState.value to result) + storedValues
                     textState.value = ""
                     attempts++
                     waitingForInput = false
@@ -510,7 +510,7 @@ fun Level3Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit, upd
             onClick = {
                 if (textState.value.length == 6) {
                     val result = checkBullsAndCows(generatedNumber, textState.value)
-                    storedValues = storedValues + (textState.value to result)
+                    storedValues = listOf(textState.value to result) + storedValues
                     textState.value = ""
                     attempts++
                     waitingForInput = false
@@ -682,7 +682,7 @@ fun Level4Screen(onAllLevelsClick: () -> Unit, onNextLevelClick: () -> Unit) {
                             startTime = System.currentTimeMillis()
                         }
                         val result = checkBullsAndCows(generatedNumber, textState.value)
-                        storedValues = storedValues + (textState.value to result)
+                        storedValues = listOf(textState.value to result) + storedValues
                         textState.value = ""
                         if (result == "4B 0C") {
                             gameWon = true
@@ -853,7 +853,7 @@ fun Level5Screen(onAllLevelsClick: () -> Unit) {
                             startTime = System.currentTimeMillis()
                         }
                         val result = checkBullsAndCows(generatedNumber, textState.value)
-                        storedValues = storedValues + (textState.value to result)
+                        storedValues = listOf(textState.value to result) + storedValues
                         textState.value = ""
                         if (result == "4B 0C") {
                             gameWon = true
